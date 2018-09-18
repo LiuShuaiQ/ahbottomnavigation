@@ -8,6 +8,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.StringRes;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.content.res.AppCompatResources;
 
@@ -19,6 +20,7 @@ public class AHBottomNavigationItem {
 	
 	private String title = "";
 	private Drawable drawable;
+	private Drawable selectedDrawable;
 	private int color = Color.GRAY;
 	
 	private
@@ -27,6 +29,8 @@ public class AHBottomNavigationItem {
 	private
 	@DrawableRes
 	int drawableRes = 0;
+	@DrawableRes
+	int selectedDrawableRes = 0;
 	private
 	@ColorRes
 	int colorRes = 0;
@@ -53,7 +57,15 @@ public class AHBottomNavigationItem {
 		this.drawableRes = resource;
 		this.color = color;
 	}
-	
+
+	@Deprecated
+	public AHBottomNavigationItem(String title, @DrawableRes int resource, @DrawableRes int selectedResource, @ColorRes int color) {
+		this.title = title;
+		this.drawableRes = resource;
+		this.selectedDrawableRes = selectedResource;
+		this.color = color;
+	}
+
 	/**
 	 * Constructor
 	 *
@@ -66,7 +78,14 @@ public class AHBottomNavigationItem {
 		this.drawableRes = drawableRes;
 		this.colorRes = colorRes;
 	}
-	
+
+	public AHBottomNavigationItem(@StringRes int titleRes, @DrawableRes int drawableRes, @DrawableRes int selectedDrawableRes, @ColorRes int colorRes) {
+		this.titleRes = titleRes;
+		this.drawableRes = drawableRes;
+		this.selectedDrawableRes = selectedDrawableRes;
+		this.colorRes = colorRes;
+	}
+
 	/**
 	 * Constructor
 	 *
@@ -88,6 +107,13 @@ public class AHBottomNavigationItem {
 	public AHBottomNavigationItem(String title, Drawable drawable, @ColorInt int color) {
 		this.title = title;
 		this.drawable = drawable;
+		this.color = color;
+	}
+
+	public AHBottomNavigationItem(String title, Drawable drawable, Drawable selectedDrawable, @ColorInt int color) {
+		this.title = title;
+		this.drawable = drawable;
+		this.selectedDrawable = selectedDrawable;
 		this.color = color;
 	}
 	
@@ -128,12 +154,25 @@ public class AHBottomNavigationItem {
 	public Drawable getDrawable(Context context) {
 		if (drawableRes != 0) {
 			try {
-				return AppCompatResources.getDrawable(context, drawableRes);
-			} catch (Resources.NotFoundException e) {
+				return VectorDrawableCompat.create(context.getResources(), drawableRes, null);
+			}catch (Resources.NotFoundException e){
 				return ContextCompat.getDrawable(context, drawableRes);
 			}
 		}
 		return drawable;
+	}
+
+	public Drawable getSelectedDrawable(Context context) {
+		if (selectedDrawableRes != 0) {
+			try {
+				return VectorDrawableCompat.create(context.getResources(), selectedDrawableRes, null);
+			}catch (Resources.NotFoundException e){
+				return ContextCompat.getDrawable(context, selectedDrawableRes);
+			}
+		}
+		if (selectedDrawable != null)
+			return selectedDrawable;
+		return getDrawable(context);
 	}
 	
 	public void setDrawable(@DrawableRes int drawableRes) {
